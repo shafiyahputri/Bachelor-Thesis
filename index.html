@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="background-container">
+        <div class="bg-overlay"></div>
+        <div class="bg-pattern"></div>
+    </div>
+    
+    <div class="main-container">
+        <div class="form-section">
+            <div class="logo-container">
+                <i class="fas fa-leaf logo-icon"></i>
+                <h1>Prediksi Jenis<span> Mangga</span></h1>
+            </div>
+            <p class="subtitle">Unggah gambar daun mangga dengan background putih untuk mengidentifikasi jenisnya</p>
+
+            <form method="POST" enctype="multipart/form-data" class="upload-form">
+                <div class="file-upload-wrapper">
+                    <input type="file" name="image" id="image" accept="image/*" required>
+                    <label for="image" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span id="file-label-text">Pilih Gambar</span>
+                    </label>
+                    <div id="file-selected-message" class="file-selected-message" style="display: none;">
+                        <i class="fas fa-check-circle"></i> 
+                        <span id="file-name-display">Image selected</span>
+                    </div>
+                </div>
+                <button type="submit" class="predict-btn">
+                    <i class="fas fa-search"></i> Prediksi
+                </button>
+            </form>
+            
+            <div class="info-box">
+                <h3><i class="fas fa-info-circle"></i> Cara Kerja </h3>
+                <ol>
+                    <li>Unggah foto daun mangga yang jelas</li>
+                    <li>AI menganalisis karakteristik daun</li>
+                    <li>Identifikasi varietas secara instan</li>
+                </ol>
+            </div>
+        </div>
+
+        {% if prediction %}
+        <div class="result-section">
+            <div class="result-header">
+                <i class="fas fa-chart-line"></i>
+                <h2>Hasil Prediksi</h2>
+            </div>
+            
+            <div class="result-content">
+                <div class="image-preview">
+                    <img src="{{ image_path }}" alt="Leaf Preview" class="preview-img">
+                </div>
+                
+                <div class="prediction-result">
+                    <div class="result-item">
+                        <span class="result-label">Jenis Mangga:</span>
+                        <span class="result-value">{{ prediction }}</span>
+                    </div>
+                    
+                    {% if processing_time %}
+                    <div class="result-item">
+                        <span class="result-label">Waktu Pemrosesan:</span>
+                        <span class="result-value">{{ processing_time }} detik</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <a href="{{ url_for('index') }}" class="new-prediction-btn">
+                <i class="fas fa-redo"></i> Prediksi Baru
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <footer class="footer">
+        <p>© 2025 Mango Variety Detection System | Powered by Shafiyah</p>
+    </footer>
+    <script>
+        // Show selected file name
+        document.getElementById('image').addEventListener('change', function(e) {
+            const fileInput = e.target;
+            const fileName = fileInput.files[0] ? fileInput.files[0].name : 'No file selected';
+            
+            document.getElementById('file-label-text').textContent = 'Change Image';
+            document.getElementById('file-name-display').textContent = fileName;
+            document.getElementById('file-selected-message').style.display = 'flex';
+        });
+
+        // Reset form for new detection
+        function resetForm() {
+            document.getElementById('image').value = '';
+            document.getElementById('file-label-text').textContent = 'Choose Leaf Image';
+            document.getElementById('file-selected-message').style.display = 'none';
+            window.location.href = "{{ url_for('index') }}";
+        }
+    </script>
+</body>
+</html>
